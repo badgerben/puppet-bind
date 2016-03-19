@@ -104,4 +104,11 @@ class bind (
         hasrestart => true,
         hasstatus  => true,
     }
+
+    exec { 'rndc_reload':
+        command     => '/usr/sbin/rndc reload',
+        onlyif      => "/usr/sbin/named-checkconf -jz ${namedconf}",
+        refreshonly => true,
+        require     => Service['bind'],
+    }
 }

@@ -115,12 +115,8 @@ define bind::zone (
         }
 
         if $zone_file_mode == 'managed' {
-            exec { "rndc reload ${_domain}":
-                command     => "/usr/sbin/rndc reload ${_domain}",
-                user        => $bind_user,
-                refreshonly => true,
-                require     => Service['bind'],
-                subscribe   => File["${cachedir}/${name}/${zone_file}"],
+            File <| title == "${cachedir}/${name}/${zone_file}" |> {
+                notify => Exec['rndc_reload'],
             }
         }
     } elsif $zone_file_mode == 'absent' {
